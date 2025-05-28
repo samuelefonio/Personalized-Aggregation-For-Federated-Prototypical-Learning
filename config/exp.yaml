@@ -4,14 +4,15 @@ data:
     name: cifar10
     path: ./data
   distribution:
-    name: iid
+    name: dir
+    beta: 0.3
   keep_test: true
   sampling_perc: 1.0
   server_split: 0.0
   server_test: true
   uniform_test: false
 eval:
-  eval_every: 1
+  eval_every: 5
   locals: false
   post_fit: true
   pre_fit: false
@@ -27,4 +28,4 @@ logger:
 protocol:
   eligible_perc: 0.1
   n_clients: 100
-  n_rounds: 1
+  n_rounds: 100

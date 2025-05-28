@@ -79,8 +79,8 @@ class FedProtoIFCAClient(FedProtoClient):
             
             self.global_protos = {i: self.global_protos[i,:] for i in range(self.hyper_params.n_protos)}
             self.prototypes = {i: self.prototypes[i,:] for i in range(self.hyper_params.n_protos)}
-        # else:
-        #     self.global_protos = global_prototypes[0]
+        else:
+            self.global_protos = global_prototypes[0]
 
 class FedProtoIFCAServer(Server):
 

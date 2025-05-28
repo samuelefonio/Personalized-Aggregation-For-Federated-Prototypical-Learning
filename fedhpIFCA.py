@@ -158,8 +158,8 @@ class FedHPIFCAServer(Server):
                   client_models: Collection[nn.Module]) -> None:
         clients_protos = list(client_models)
         sim_scores = self._compute_similarity(clients_protos)
-        os.makedirs(f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}", exist_ok=True)
-        torch.save(sim_scores, f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
+        os.makedirs(f"results_fedhp/{self.hyper_params['K']}/{self.id_exp}", exist_ok=True)
+        torch.save(sim_scores, f"results_fedhp/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
         self.temp_protos = []
         
         if self.hyper_params['soft']:
