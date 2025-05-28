@@ -1,0 +1,30 @@
+data:
+  client_split: 0.2
+  dataset:
+    name: cifar10
+    path: ./data
+  distribution:
+    name: iid
+  keep_test: true
+  sampling_perc: 1.0
+  server_split: 0.0
+  server_test: true
+  uniform_test: false
+eval:
+  eval_every: 1
+  locals: false
+  post_fit: true
+  pre_fit: false
+  server: true
+  task: classification
+exp:
+  device: cpu
+  seed: 42
+logger:
+  name: mylog.MyWandBLog
+  project: wafl25
+  entity: mlgroup
+protocol:
+  eligible_perc: 0.1
+  n_clients: 100
+  n_rounds: 1

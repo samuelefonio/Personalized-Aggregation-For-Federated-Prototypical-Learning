@@ -1,0 +1,24 @@
+hyperparameters:
+  client:
+    batch_size: 32
+    local_epochs: 5
+    loss: CrossEntropyLoss
+    n_protos: 10
+    lam: 1
+    finetuning_epochs: 1
+    model: CifarConv2
+    optimizer:
+      lr: 0.01
+      momentum: 0.9
+      weight_decay: 0.0001
+    persistency: true
+    scheduler:
+      gamma: 1
+      step_size: 1
+  model: CifarConv2
+  server:
+    weighted: true
+    soft: false
+    K: 4
+    n_protos: 10
+name: fedprotoIFCA.FedProtoIFCA
