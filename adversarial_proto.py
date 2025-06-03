@@ -28,8 +28,8 @@ class FedProtoClient_Adv(FedProtoClient):
         print(self.malicious)
 
     def fit(self, override_local_epochs = 0):
-        if self.malicious:
-            return 0
+        if self.malicious and self.prototypes[0] == None:
+            return super().fit(1)
         else:
             return super().fit(override_local_epochs)
 
@@ -63,8 +63,8 @@ class FedProtoIFCAClient_Adv(FedProtoIFCAClient):
         print(self.malicious)
 
     def fit(self, override_local_epochs = 0):
-        if self.malicious:
-            return 0
+        if self.malicious and self.prototypes[0] == None:
+            return super().fit(1)
         else:
             return super().fit(override_local_epochs)
 
@@ -100,7 +100,7 @@ class FedHPClient_Adv(FedHPClient):
 
     def fit(self, override_local_epochs = 0):
         if self.malicious:
-            return 0
+            return super().fit(1)
         else:
             return super().fit(override_local_epochs)
 
@@ -138,7 +138,7 @@ class FedHPIFCAClient_Adv(FedHPIFCAClient):
 
     def fit(self, override_local_epochs = 0):
         if self.malicious:
-            return 0
+            return super().fit(1)
         else:
             return super().fit(override_local_epochs)
 
