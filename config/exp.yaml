@@ -28,4 +28,4 @@ logger:
 protocol:
   eligible_perc: 0.1
   n_clients: 100
-  n_rounds: 100
+  n_rounds: 150
