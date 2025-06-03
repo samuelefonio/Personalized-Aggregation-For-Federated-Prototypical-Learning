@@ -167,14 +167,6 @@ class FedHPIFCAServer_Adv(FedHPIFCAServer):
         self.notify(event="finished", round=self.rounds + 1)
 
 
-
-
-
-
-
-
-
-
 class FedProto_Adv(PersonalizedFL):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -184,7 +176,7 @@ class FedProto_Adv(PersonalizedFL):
         return FedProtoClient_Adv
 
     def get_server_class(self) -> type[Server]:
-        return FedProtoServer
+        return FedProtoServer_Adv
     
 
 class FedHP_Adv(PersonalizedFL):
