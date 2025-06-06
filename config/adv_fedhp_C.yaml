@@ -6,7 +6,7 @@ hyperparameters:
     n_protos: 10
     lam: [0.1, 0.5]
     finetuning_epochs: 1
-    malicious_percentage: [0.3, 0.6, 0.9]
+    malicious_percentage: [0.2, 0.4, 0.6]
     adv_factor: [1, 3]
     atk_type: [random, revert]
     model: CifarConv2_E
