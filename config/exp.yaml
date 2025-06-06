@@ -20,7 +20,7 @@ eval:
   task: classification
 exp:
   device: cpu
-  seed: 42
+  seed: [42, 117, 12345]
 logger:
   name: mylog.MyWandBLog
   project: wafl25
@@ -28,4 +28,4 @@ logger:
 protocol:
   eligible_perc: 0.1
   n_clients: 100
-  n_rounds: 150
+  n_rounds: 500

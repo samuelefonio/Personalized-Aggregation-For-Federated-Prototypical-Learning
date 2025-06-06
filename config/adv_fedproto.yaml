@@ -1,12 +1,14 @@
 hyperparameters:
   client:
-    batch_size: 32
-    lam: 1
-    local_epochs: 5
+    batch_size: 16
+    lam: [0.1, 1]
+    local_epochs: 1
     loss: CrossEntropyLoss
     model: CifarConv2
     finetuning_epochs: 1
-    malicious_percentage: [0.2, 0.4, 0.6, 0.8]
+    malicious_percentage: 0.8
+    adv_factor: [1, 1.25, 1.5]
+    atk_type: [random, revert]
     n_protos: 10
     optimizer:
       lr: 0.01
@@ -20,3 +22,4 @@ hyperparameters:
     n_protos: 10
     weighted: true
 name: adversarial_proto.FedProto_Adv
+# name: fluke.algorithms.fedproto.FedProto

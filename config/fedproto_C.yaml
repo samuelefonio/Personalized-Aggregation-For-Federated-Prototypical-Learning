@@ -1,13 +1,12 @@
 hyperparameters:
   client:
-    batch_size: 32
-    local_epochs: 5
+    batch_size: 16
+    local_epochs: 1
     loss: CrossEntropyLoss
     n_protos: 10
     lam: 1
     finetuning_epochs: 1
     model: CifarConv2
-    malicious_percentage: 0.1
     optimizer:
       lr: 0.01
       momentum: 0.9
@@ -18,8 +17,8 @@ hyperparameters:
       step_size: 1
   model: CifarConv2
   server:
-    weighted: true
+    weighted: false
     soft: false
-    K: [2, 3, 4, 5, 6, 7, 8]
+    K: 9
     n_protos: 10
-name: adversarial_proto.FedProtoIFCA_Adv
+name: fedproto_C.FedProto_C

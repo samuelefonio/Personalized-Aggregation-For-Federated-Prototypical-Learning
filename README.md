@@ -11,5 +11,5 @@ pip install fluke-fl
 
 Run the algorithms through the command:
 ```
-fluke federation config/exp.yaml fedprotoIFCA.yaml
+fluke sweep config/exp.yaml adv_fedproto_C.yaml
 ```

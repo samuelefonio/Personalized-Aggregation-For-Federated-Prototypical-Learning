@@ -1,12 +1,12 @@
 hyperparameters:
   client:
-    batch_size: 32
-    local_epochs: 5
+    batch_size: 16
+    local_epochs: 1
     loss: CrossEntropyLoss
     n_protos: 10
-    lam: 1
+    lam: [1000]
     finetuning_epochs: 1
-    model: CifarConv2
+    model: CifarConv2_E
     optimizer:
       lr: 0.01
       momentum: 0.9
@@ -15,10 +15,11 @@ hyperparameters:
     scheduler:
       gamma: 1
       step_size: 1
-  model: CifarConv2
+  model: CifarConv2_E
   server:
-    weighted: true
+    weighted: false
+    embedding_size: 1600
     soft: false
-    K: [2, 3, 4, 5, 6, 7, 8]
+    K: 9
     n_protos: 10
-name: fedprotoIFCA.FedProtoIFCA
+name: fedhp_C.FedHP_C

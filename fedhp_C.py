@@ -32,7 +32,7 @@ from fluke.algorithms import CentralizedFL, PersonalizedFL  # NOQA
 
 from fluke.algorithms.fedhp import FedHPClient, FedHPModel, FedHPServer, ProtoNet, SeparationLoss  # NOQA
 
-class FedHPIFCAClient(FedHPClient):
+class FedHP_C_Client(FedHPClient):
     
     @torch.no_grad()
     def receive_model(self) -> None:
@@ -54,12 +54,52 @@ class FedHPIFCAClient(FedHPClient):
                 if similarity.item() > max_similarity_index:
                     max_similarity_index = similarity.item()
                     self.model.prototypes.data = prototypes
+
+    def fit(self, override_local_epochs: int = 0) -> float:
+        epochs: int = (
+            override_local_epochs if override_local_epochs > 0 else self.hyper_params.local_epochs
+        )
+        self.model.train()
+        self.model.to(self.device)
+
+        def filter_fun(model):
+            return [param for name, param in model.named_parameters() if "prototype" not in name]
+
+        if self.optimizer is None:
+            self.optimizer, self.scheduler = self._optimizer_cfg(self.model, filter_fun=filter_fun)
+
+        if self.proto_opt is None:
+            proto_params = [p for name, p in self.model.named_parameters() if "proto" in name]
+            self.proto_opt = optim.Adam(proto_params, lr=0.005)
+
+        running_loss = 0.0
+        for _ in range(epochs):
+            for _, (X, y) in enumerate(self.train_set):
+                X, y = X.to(self.device), y.to(self.device)
+                self.optimizer.zero_grad()
+                self.proto_opt.zero_grad()
+                _, dists = self.model.forward(X)
+                loss = (1 - self.hyper_params.lam) * self.hyper_params.loss_fn(dists, y)
+                loss_proto = torch.mean(
+                    1 - nn.CosineSimilarity(dim=1)(unwrap(self.model).prototypes, self.anchors)
+                )
+                loss += self.hyper_params.lam * loss_proto
+                loss.backward()
+                self._clip_grads(self.model)
+                self.optimizer.step()
+                self.proto_opt.step()
+                running_loss += loss.item()
+            self.scheduler.step()
+        running_loss /= epochs * len(self.train_set)
+        self.model.cpu()
+        clear_cuda_cache()
+        return running_loss
         
     def send_model(self) -> None:
         self.channel.send(Message(copy.deepcopy(self.model.prototypes.data),
                           "prototypes", self.index, inmemory=True), "server")
 
-class FedHPIFCAServer(Server):
+class FedHP_C_Server(Server):
     def __init__(self,
                  model: nn.Module,
                  test_set: FastDataLoader,
@@ -161,10 +201,10 @@ class FedHPIFCAServer(Server):
         os.makedirs(f"results_fedhp/{self.hyper_params['K']}/{self.id_exp}", exist_ok=True)
         torch.save(sim_scores, f"results_fedhp/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
         self.temp_protos = []
-        
+        weights = self._get_client_weights(eligible)
+        weights = torch.FloatTensor(weights)
         if self.hyper_params['soft']:
-            weights = self._get_client_weights(eligible)
-            weights = torch.FloatTensor(weights)
+            
             for i, client_protos in enumerate(clients_protos):
 
                 temp_client_protos = deepcopy(client_protos)
@@ -184,25 +224,18 @@ class FedHPIFCAServer(Server):
                 
                 nearest_clients_sd = [clients_protos[j] for j in nearest_clients_ind]
                 
-                nearest_clients = [eligible[j] for j in nearest_clients_ind]
-                num_ex = [client.n_examples for client in nearest_clients]
-                tot_ex = sum(num_ex)
-                small_weights = [num_ex[j] / tot_ex for j in range(len(nearest_clients))]
-
-                temp_client_protos = [small_weights[j] * nearest_clients_sd[j] for j in range(len(nearest_clients_sd))]
-                
-                temp_client_protos = torch.sum(torch.stack(temp_client_protos), dim=0) / len(nearest_clients_ind)
+                temp_client_protos = torch.sum(torch.stack(nearest_clients_sd), dim=0) / len(nearest_clients_ind)
 
                 self.temp_protos.append(temp_client_protos)
 
-class FedHPIFCA(PersonalizedFL):
+class FedHP_C(PersonalizedFL):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.server.attach(self)
 
     def get_client_class(self) -> type[Client]:
-        return FedHPIFCAClient
+        return FedHP_C_Client
 
     def get_server_class(self) -> type[Server]:
-        return FedHPIFCAServer
+        return FedHP_C_Server
 

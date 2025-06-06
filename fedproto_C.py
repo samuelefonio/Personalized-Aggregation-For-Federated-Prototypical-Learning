@@ -37,7 +37,7 @@ def from_dict_to_tensor(d: dict) -> torch.Tensor:
     out_tensor = torch.stack(tensors, dim=0)
     return out_tensor
 
-class FedProtoIFCAClient(FedProtoClient):
+class FedProto_C_Client(FedProtoClient):
     
     def get_protos(self):
         self.model.train()
@@ -82,7 +82,7 @@ class FedProtoIFCAClient(FedProtoClient):
         else:
             self.global_protos = global_prototypes[0]
 
-class FedProtoIFCAServer(Server):
+class FedProto_C_Server(Server):
 
     def __init__(self,
                  model: Module,
@@ -123,6 +123,7 @@ class FedProtoIFCAServer(Server):
                 similarity_matrix[i, j] = sims.mean()  
                 similarity_matrix[j, i] = sims.mean()
         return similarity_matrix
+    
     def fit(self, *args: Any, **kwargs: Any) -> None:
         
         if self.rounds == 0:
@@ -146,9 +147,10 @@ class FedProtoIFCAServer(Server):
         torch.save(sim_scores, f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
         self.temp_protos = []
 
+        weights = self._get_client_weights(eligible)
+        weights = torch.FloatTensor(weights)
         if self.hyper_params['soft']:
-            weights = self._get_client_weights(eligible)
-            weights = torch.FloatTensor(weights)
+            
             for i, client_protos in enumerate(clients_protos):
 
                 temp_client_protos = deepcopy(client_protos)
@@ -168,26 +170,19 @@ class FedProtoIFCAServer(Server):
 
                 nearest_clients_sd = [clients_protos[j] for j in nearest_clients_ind]
                 
-                nearest_clients = [eligible[j] for j in nearest_clients_ind]
-                num_ex = [client.n_examples for client in nearest_clients]
-                tot_ex = sum(num_ex)
-                small_weights = [num_ex[j] / tot_ex for j in range(len(nearest_clients))]
-
-                temp_client_protos = [small_weights[j] * nearest_clients_sd[j] for j in range(len(nearest_clients_sd))]
-                                
-                temp_client_protos = torch.sum(torch.stack(temp_client_protos), dim=0) / len(nearest_clients_ind)
+                temp_client_protos = torch.sum(torch.stack(nearest_clients_sd), dim=0) / len(nearest_clients_ind)
 
                 temp_client_protos = {j: temp_client_protos[j,:] for j in range(self.hyper_params.n_protos)}
                 self.temp_protos.append(temp_client_protos)
         
 
-class FedProtoIFCA(PersonalizedFL):
+class FedProto_C(PersonalizedFL):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.server.attach(self)
 
     def get_client_class(self) -> PFLClient:
-        return FedProtoIFCAClient
+        return FedProto_C_Client
 
     def get_server_class(self) -> type[Server]:
-        return FedProtoIFCAServer
+        return FedProto_C_Server
