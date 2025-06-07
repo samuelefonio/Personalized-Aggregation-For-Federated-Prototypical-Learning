@@ -75,8 +75,8 @@ class FedProto_C_Client(FedProtoClient):
                 similarity = torch.mean(cosine_similarity(self.prototypes, prototypes))
                 if similarity.item() > max_similarity_index:
                     max_similarity_index = similarity.item()
-                    self.global_protos = prototypes
-            
+                    new_prototypes = deepcopy(prototypes)
+                    self.global_protos = new_prototypes
             self.global_protos = {i: self.global_protos[i,:] for i in range(self.hyper_params.n_protos)}
             self.prototypes = {i: self.prototypes[i,:] for i in range(self.hyper_params.n_protos)}
         else:
@@ -173,6 +173,7 @@ class FedProto_C_Server(Server):
                 temp_client_protos = torch.sum(torch.stack(nearest_clients_sd), dim=0) / len(nearest_clients_ind)
 
                 temp_client_protos = {j: temp_client_protos[j,:] for j in range(self.hyper_params.n_protos)}
+                print({torch.norm(temp_client_protos[j]).item() for j in range(self.hyper_params.n_protos)})
                 self.temp_protos.append(temp_client_protos)
         
 

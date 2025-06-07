@@ -53,7 +53,8 @@ class FedHP_C_Client(FedHPClient):
                 similarity = torch.mean(cosine_similarity(local_prototypes, prototypes))
                 if similarity.item() > max_similarity_index:
                     max_similarity_index = similarity.item()
-                    self.model.prototypes.data = prototypes
+                    new_prototypes = deepcopy(prototypes)
+                    self.model.prototypes.data = new_prototypes
 
     def fit(self, override_local_epochs: int = 0) -> float:
         epochs: int = (
