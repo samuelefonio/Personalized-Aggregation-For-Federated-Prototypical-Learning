@@ -199,7 +199,7 @@ class FedHP_C_Client_Adv(FedHP_C_Client):
         if self.malicious:
             if self.hyper_params['atk_type'] == 'revert':
                 print(f'client {self.index} is malicious, sending global_prototypes reverted')
-                self.channel.send(Message(-self.hyper_params['adv_factor']*copy.deepcopy(self.model.prototypes.data), "model", self.index, inmemory=True), "server")
+                self.channel.send(Message(-self.hyper_params['adv_factor']*copy.deepcopy(self.model.prototypes.data), "prototypes", self.index, inmemory=True), "server")
             else:
                 print(f'client {self.index} is malicious, sending random prototypes')
                 self.channel.send(Message(torch.rand(self.model.prototypes.data.shape),"prototypes", self.index, inmemory=True), "server")
