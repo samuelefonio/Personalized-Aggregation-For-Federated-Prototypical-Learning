@@ -138,7 +138,7 @@ class FedProto_C_Server(Server):
     @torch.no_grad()
     def aggregate(self, eligible: Collection[Client], client_models: Collection[Module]) -> None:
         
-        clients_protos = [from_dict_to_tensor(i) for i in client_models]
+        clients_protos = [from_dict_to_tensor(i).to(self.device) for i in client_models]
         
         # calculate the average cosine similarity among all the pairs
         sim_scores = self._compute_similarity(clients_protos)
