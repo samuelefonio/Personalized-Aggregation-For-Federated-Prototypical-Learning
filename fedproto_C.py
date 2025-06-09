@@ -143,8 +143,9 @@ class FedProto_C_Server(Server):
         # calculate the average cosine similarity among all the pairs
         sim_scores = self._compute_similarity(clients_protos)
         
-        os.makedirs(f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}", exist_ok=True)
-        torch.save(sim_scores, f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
+        if self.rounds%10 == 0:
+            os.makedirs(f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}", exist_ok=True)
+            torch.save(sim_scores, f"results_fedproto/{self.hyper_params['K']}/{self.id_exp}/sim_scores_{self.rounds}.pt")
         self.temp_protos = []
 
         weights = self._get_client_weights(eligible)
