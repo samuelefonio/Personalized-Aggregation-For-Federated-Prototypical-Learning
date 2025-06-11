@@ -156,7 +156,7 @@ class FedProto_C_Server(Server):
 
                 temp_client_protos = deepcopy(clients_protos)
                 w = torch.nn.functional.softmax(sim_scores[i,:])
-                temp_client_protos = [w[i] * p for i,p in enumerate(temp_client_protos)]
+                temp_client_protos = [w[k] * p for k,p in enumerate(temp_client_protos)]
                 
                 temp_client_protos = torch.sum(torch.stack(temp_client_protos), dim=0) / len(clients_protos)
                 temp_client_protos = {j: temp_client_protos[j,:] for j in range(self.hyper_params.n_protos)}
