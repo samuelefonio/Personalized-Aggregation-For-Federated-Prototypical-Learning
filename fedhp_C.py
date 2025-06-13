@@ -1,11 +1,4 @@
-"""Implementation of the FedHP: Federated Learning with Hyperspherical Prototypical Regularization
-[FedHP24]_ algorithm.
 
-References:
-    .. [FedHP24] Samuele Fonio, Mirko Polato, Roberto Esposito.
-       FedHP: Federated Learning with Hyperspherical Prototypical Regularization. In ESANN (2024).
-       URL: https://www.esann.org/sites/default/files/proceedings/2024/ES2024-183.pdf
-"""
 import copy
 import sys
 from typing import Collection, Generator, Literal, Any

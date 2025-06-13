@@ -1,5 +1,5 @@
-# Repository for "Clustered Federated Leanring with Prototypes"
-This is the official repository of "Clustered Federated Learning with Prototypes".  
+# Repository for "Personalized Aggregation for Federated Prototypical Learning"
+This is the official repository of "Personalized Aggregation for Federated Prototypical Learning".  
 The algorithm is implemented in fluke and compare with baselines implemented in it.  
 To reproduce the experiments, install a venv:
 
